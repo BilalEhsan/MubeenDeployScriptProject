@@ -28,7 +28,7 @@ read -p "Enter your GitHub repository URL for the Laravel project: " REPO_URL
 read -p "Enter the domain name or IP address for your server: " SERVER_NAME
 
 # Set fixed variables
-PHP_VERSION="7.4"
+PHP_VERSION="8.2"
 MYSQL_ROOT_PASSWORD="my_sql_root_password"
 DB_NAME="testcode"
 DB_USER="testcode_db_user"
@@ -43,9 +43,11 @@ sudo apt -y install software-properties-common
 sudo add-apt-repository ppa:ondrej/php
 sudo apt update
 
+
 # Install necessary packages
 check_and_remove_lock
-sudo apt install nginx mariadb-server php${PHP_VERSION}-fpm php${PHP_VERSION}-mysql php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-zip php${PHP_VERSION}-curl git unzip nodejs -y
+sudo apt install nginx mariadb-server php${PHP_VERSION}-fpm php${PHP_VERSION}-mysql php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-zip php${PHP_VERSION}-curl php${PHP_VERSION}-gd  git unzip nodejs -y
+
 
 sudo systemctl start mariadb.service
 
@@ -125,8 +127,7 @@ sudo chgrp -R www-data storage bootstrap/cache
 sudo chmod -R ug+rwx storage bootstrap/cache
 
 # Run migrations and seeders
-php artisan migrate:fresh --force
-php artisan db:seed --force
+php artisan migrate:fresh --seed
 
 php artisan storage:link
 
@@ -159,15 +160,17 @@ server {
 }
 "
 
+sudo unlink /etc/nginx/sites-enabled/$SERVER_NAME
+sudo unlink /etc/nginx/sites-available/$SERVER_NAME
 echo "$NGINX_CONFIG" | sudo tee /etc/nginx/sites-available/$SERVER_NAME
 sudo ln -s /etc/nginx/sites-available/$SERVER_NAME /etc/nginx/sites-enabled/
-sudo unlink /etc/nginx/sites-enabled/default
+
 
 # Restart Nginx
 sudo systemctl restart nginx
 
 echo "Laravel project deployed successfully!"
 
-echo "Your dashboard link: http://$SERVERNAME.com"
+
 echo "Your Username: adminUser"
 echo "Your Password: adminPassword"
