@@ -167,3 +167,7 @@ sudo unlink /etc/nginx/sites-enabled/default
 sudo systemctl restart nginx
 
 echo "Laravel project deployed successfully!"
+
+echo "Your dashboard link: http://$SERVERNAME.com"
+echo "Your Username: adminUser"
+echo "Your Password: adminPassword"
